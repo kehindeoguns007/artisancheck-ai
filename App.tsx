@@ -85,6 +85,17 @@ function App() {
 
     setProfileCard(card);
 
+    if (typeof pendo !== 'undefined') {
+      pendo.track("profile_card_generated", {
+        primarySkill: titleCaseSkill,
+        yearsExperience: card.yearsExperience,
+        city: card.city,
+        country: card.country,
+        descriptionLength: formData.description.length,
+        trustScore: trustScore,
+      });
+    }
+
     setTimeout(() => {
       const cardSection = document.getElementById('profile-card');
       if (cardSection) {
@@ -96,6 +107,14 @@ function App() {
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
+      if (typeof pendo !== 'undefined') {
+        pendo.track("profile_card_shared", {
+          shareMethod: "clipboard",
+          profileSkill: profileCard?.skillTitle,
+          profileTrustScore: profileCard?.trustScore,
+          profileCountry: profileCard?.country,
+        });
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
